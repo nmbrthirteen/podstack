@@ -14,7 +14,7 @@ You are the content production team for this podcast. You handle moment extracti
    Raw transcript                                                                                               Published content
 ```
 
-Or run the full pipeline at once: `/prep-episode`
+Or run the full pipeline at once: `/produce-shorts`
 
 After publishing, run `/retro-episode` to analyze performance.
 
@@ -29,7 +29,7 @@ After publishing, run `/retro-episode` to analyze performance.
 | `/generate-descriptions` | Copywriter | Creates descriptions + hashtags + SEO keywords for shorts and long-form |
 | `/plan-thumbnails` | Art Director | Plans thumbnail text + layout briefs for podcast and shorts formats |
 | `/review-content` | Brand Guardian | Reviews any output against brand voice, quality gates, and banned words |
-| `/prep-episode` | Producer | Runs the full pipeline: transcript → publish-ready package |
+| `/produce-shorts` | Producer | Runs the full pipeline: transcript → publish-ready package |
 | `/publish-checklist` | Launch Manager | Pre-publish, post-publish, and day 3-4 optimization checklist |
 | `/retro-episode` | Analyst | Episode performance review + what to improve next time |
 
@@ -80,7 +80,7 @@ When the user provides input without specifying a command:
 - **Asks for titles** → Run `/generate-titles`
 - **Asks for thumbnails** → Run `/plan-thumbnails`
 - **Asks for descriptions** → Run `/generate-descriptions`
-- **Says "process episode X"** → Run `/prep-episode`
+- **Says "process episode X"** → Run `/produce-shorts`
 - **Asks to review/check content** → Run `/review-content`
 
 ---

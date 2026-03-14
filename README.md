@@ -19,7 +19,7 @@ Inspired by [gstack](https://github.com/garrytan/gstack) by Garry Tan.
 | `/generate-descriptions` | Copywriter | Creates descriptions + hashtags + SEO keywords |
 | `/plan-thumbnails` | Art Director | Plans thumbnail text + layout briefs for your designer |
 | `/review-content` | Brand Guardian | Reviews output against your brand voice + quality gates |
-| `/prep-episode` | Producer | Full pipeline: transcript → publish-ready package |
+| `/produce-shorts` | Producer | Full pipeline: transcript → publish-ready package |
 | `/publish-checklist` | Launch Manager | Pre/post-publish optimization checklist |
 | `/retro-episode` | Analyst | Episode performance review + learnings |
 
@@ -100,7 +100,7 @@ Each file has starter templates with examples. Fill them in with your show's spe
 ### 2. Process your first episode
 
 ```
-/prep-episode
+/produce-shorts
 ```
 
 Paste your transcript or point to a file. PodStack runs the full pipeline and delivers a publish-ready content package.
@@ -123,7 +123,7 @@ Paste your transcript or point to a file. PodStack runs the full pipeline and de
    Raw transcript                                                                                               Published content
 ```
 
-Or run everything at once: **`/prep-episode`**
+Or run everything at once: **`/produce-shorts`**
 
 After publishing, analyze performance: **`/retro-episode`**
 
@@ -195,7 +195,7 @@ podstack/
 │   ├── generate-descriptions.md
 │   ├── plan-thumbnails.md
 │   ├── review-content.md
-│   ├── prep-episode.md
+│   ├── produce-shorts.md
 │   ├── publish-checklist.md
 │   └── retro-episode.md
 └── templates/                ← Starter knowledge base files

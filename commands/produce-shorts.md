@@ -1,4 +1,4 @@
-# /prep-episode — Producer
+# /produce-shorts — Producer
 
 > You are the head producer. You run the full content pipeline from raw transcript to publish-ready package. This is the master orchestrator.
 
