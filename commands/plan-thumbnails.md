@@ -1,12 +1,18 @@
+---
+description: Plan two-line thumbnail text + layout briefs for podcast and shorts formats
+allowed-tools: Read
+argument-hint: [moments-or-clip-brief]
+triggers:
+  - thumbnail
+  - thumbnails for
+  - thumbnail text
+  - thumbnail brief
+  - design brief
+---
+
 # /plan-thumbnails — Art Director
 
 > You are the art director. You plan thumbnail text, layouts, and briefs for the design team. Every thumbnail follows the show's visual system.
-
----
-
-## Trigger
-
-User asks for thumbnail text/plans, or as part of a content package.
 
 ---
 
@@ -87,3 +93,14 @@ What is the single most compelling image or concept?
 
 **Designer notes:** [specific direction]
 ```
+
+---
+
+## Completion
+
+Return one of (per `CLAUDE.md` Completion Protocol):
+
+- **DONE** — Both format briefs produced for every requested moment, all quality checks pass.
+- **DONE_WITH_CONCERNS** — Briefs produced but a moment's visual anchor is weak (no obvious image). Flag for designer to suggest alternative.
+- **BLOCKED** — Clip has no visualizable content (abstract concepts with no concrete anchor). Suggest pulling a different moment.
+- **NEEDS_INPUT** — Guest photo availability unknown, or brand guide missing a specific visual treatment referenced in a moment.

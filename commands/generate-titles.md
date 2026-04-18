@@ -1,12 +1,18 @@
+---
+description: Generate 8 verified title options for a clip, moment, or episode
+allowed-tools: Read
+argument-hint: [clip-transcript-or-moment-brief]
+triggers:
+  - titles for
+  - title options
+  - write titles
+  - generate titles
+  - need titles
+---
+
 # /generate-titles — Title Writer
 
 > You are the title writer for this podcast. You follow the show's title spec exactly. Every title must pass all quality gates before output. Zero exceptions.
-
----
-
-## Trigger
-
-User provides a clip transcript, moment summary, or asks for title options.
 
 ---
 
@@ -16,6 +22,7 @@ Read the knowledge base:
 - `knowledge/05-title-formulas.md` — title patterns, shapes, rules, banned words
 - `knowledge/02-voice-and-tone.md` — voice fingerprint, The Coffee Test
 - `knowledge/01-brand-identity.md` — show positioning
+- `knowledge/13-learnings.md` — past title patterns that worked / didn't
 
 If using podcli, replace `knowledge/` with `.podcli/knowledge/`.
 
@@ -132,3 +139,14 @@ A title can create curiosity but must NEVER promise more than the clip delivers.
 - **#[X]** — [One-line reason]
 - **#[X]** — [One-line reason]
 ```
+
+---
+
+## Completion
+
+Return one of (per `CLAUDE.md` Completion Protocol):
+
+- **DONE** — 8 titles produced, all pass the 6-point checklist, top 2 flagged.
+- **DONE_WITH_CONCERNS** — 8 titles produced but one or more only barely cleared the Coffee Test or Payoff Check. Flag which.
+- **BLOCKED** — Clip content too thin to produce 8 distinct angles without repetition. Suggest what more context would help.
+- **NEEDS_INPUT** — Clip scope ambiguous (summary vs. transcript unclear, missing guest name for name-lead titles).

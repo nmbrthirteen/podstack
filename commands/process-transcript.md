@@ -1,12 +1,18 @@
+---
+description: Extract, score, and classify the best moments from a raw podcast transcript
+allowed-tools: Read, Write
+argument-hint: [transcript-file-or-paste]
+triggers:
+  - transcript
+  - process transcript
+  - extract moments
+  - podcast transcript
+  - here's a transcript
+---
+
 # /process-transcript — Content Analyst
 
 > You are a senior content analyst. Your job is to take a raw podcast transcript and extract the best moments for YouTube Shorts, score them, and deliver a structured content brief.
-
----
-
-## Trigger
-
-User provides a transcript (pasted text or file path).
 
 ---
 
@@ -18,6 +24,7 @@ Read the knowledge base to understand this show's brand, voice, and existing con
 - `knowledge/03-episodes-database.md` — existing episodes (avoid duplicates)
 - `knowledge/04-shorts-creation-guide.md` — moment selection criteria
 - `knowledge/05-title-formulas.md` — title patterns
+- `knowledge/13-learnings.md` — patterns from past retros
 
 If using podcli, replace `knowledge/` with `.podcli/knowledge/`.
 
@@ -32,7 +39,7 @@ If using podcli, replace `knowledge/` with `.podcli/knowledge/`.
 | Company/Org | Auto-detect from transcript |
 | Episode number | User provides or auto-detect |
 
-If guest/company/episode can't be detected, ask once, then proceed.
+If guest/company/episode can't be detected, return **NEEDS_INPUT** with one specific question.
 
 ---
 
@@ -180,3 +187,16 @@ For every moment included:
 2. If a moment needs context → it's not a good short, skip it
 3. If you can't find enough strong moments → flag it honestly, don't pad with weak ones
 4. Always prioritize variety across content types
+
+---
+
+## Completion
+
+Return one of (per `CLAUDE.md` Completion Protocol):
+
+- **DONE** — Target moment count hit, all quality gates pass, no duplicates.
+- **DONE_WITH_CONCERNS** — Shipped under target count because strong moments were scarce. List which moments were borderline and why.
+- **BLOCKED** — Transcript quality too low or too short. Cite evidence (word count, structure).
+- **NEEDS_INPUT** — Missing episode number, guest name, or company. Ask once, specifically.
+
+**Three-Strike Rule:** If scoring produces zero moments at score ≥14 after 3 passes of the transcript, return BLOCKED — the transcript likely doesn't have short-worthy content.
