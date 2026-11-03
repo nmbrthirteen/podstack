@@ -1,4 +1,4 @@
-# [Your Show Name] — Brand Identity
+# [Your Show Name]: Brand Identity
 
 ## Show Basics
 
@@ -15,7 +15,7 @@
 
 ## Positioning
 
-> **"[Your positioning statement — what makes you different]"**
+> **"[Your positioning statement, what makes you different]"**
 
 ---
 

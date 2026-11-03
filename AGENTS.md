@@ -1,8 +1,8 @@
-# AGENTS.md — PodStack
+# AGENTS.md: PodStack
 
 > Cross-tool entry point for PodStack skills.
 >
-> This file is the **primary instruction document** for AI coding tools that read `AGENTS.md` by convention (OpenAI Codex, opencode, Aider, Cursor Agent, and others). Claude Code uses `CLAUDE.md` as its primary but also reads `AGENTS.md` as a secondary index.
+> This file is the **primary instruction document** for AI coding tools that read `AGENTS.md` by convention (OpenAI Codex, opencode, Aider, Cursor Agent, and others). Claude Code uses `CLAUDE.md` as its primary doc.
 
 PodStack turns your AI tool into a podcast content team: Episode Architect, Content Analyst, Title Writer, Copywriter, Art Director, Brand Guardian, Producer, Launch Manager, and Performance Analyst.
 
@@ -10,17 +10,17 @@ PodStack turns your AI tool into a podcast content team: Episode Architect, Cont
 
 ## How To Use
 
-Each skill below is a self-contained instruction file in `commands/` (or `.claude/commands/`, `.codex/prompts/`, `.cursor/rules/`, `.opencode/commands/` — depending on which host installed it).
+Each skill below is a self-contained instruction file in `commands/` (or `.claude/commands/`, `.codex/prompts/`, `.cursor/rules/`, `.opencode/commands/`, depending on which host installed it).
 
 **To run a skill:** ask your agent to "run the [skill-name] skill" or invoke its slash command (`/[skill-name]`) where supported. The agent opens the corresponding file and follows it step by step.
 
-**Natural-language triggers:** each skill's `triggers:` list describes phrases that should auto-route to it. If the user's message matches one, run that skill without asking.
+**Natural-language triggers:** each skill's `triggers:` list names phrases that suggest it. Treat the list as guidance. If the user's message clearly matches one, run that skill. If two match, ask which.
 
 **Completion Protocol:** every skill ends its output with one of:
-- `DONE` — all quality gates passed
-- `DONE_WITH_CONCERNS` — shipped, but flag non-blocking issues with evidence
-- `BLOCKED` — cannot complete; state blocker + what's needed to unblock
-- `NEEDS_INPUT` — one specific missing input; ask the question and wait
+- `DONE`: all quality gates passed
+- `DONE_WITH_CONCERNS`: shipped, but flag non-blocking issues with evidence
+- `BLOCKED`: cannot complete; state blocker + what's needed to unblock
+- `NEEDS_INPUT`: one specific missing input; ask the question and wait
 
 **Three-Strike Rule:** orchestrators (`/produce-shorts`) stop after 3 consecutive phase failures and return `BLOCKED` rather than looping.
 
@@ -130,12 +130,12 @@ Skill files reference these knowledge files (default location: `knowledge/`, or 
 
 | File | Contents |
 |------|----------|
-| `00-master-instructions.md` | AI operating system — routing, decision tree |
+| `00-master-instructions.md` | Show-level operating instructions, brand DNA, quality gate |
 | `01-brand-identity.md` | Show positioning, hosts, format |
 | `02-voice-and-tone.md` | Voice fingerprint, banned words |
 | `03-episodes-database.md` | Episode tracking, existing shorts log |
 | `04-shorts-creation-guide.md` | Moment selection criteria |
-| `05-title-formulas.md` | Title spec — shapes, rules |
+| `05-title-formulas.md` | Title spec: shapes, rules |
 | `06-descriptions-template.md` | Description formulas, hashtags |
 | `07-thumbnail-guide.md` | Layouts, colors, typography |
 | `08-topics-themes.md` | Core topics, audience mapping |
@@ -151,12 +151,12 @@ Skill files reference these knowledge files (default location: `knowledge/`, or 
 
 Before outputting ANY content, verify:
 
-1. **Would I click this?** — If no, rewrite
-2. **Does it earn attention in 5 seconds?** — If no, find a better hook
-3. **Does it deliver on the promise?** — If no, it's clickbait
-4. **Is it standalone?** — If context needed, unusable for shorts
-5. **Zero banned words** — Check `02-voice-and-tone.md`
-6. **The Coffee Test** — Sounds like a person, not a press release
+1. **Would I click this?**: If no, rewrite
+2. **Does it earn attention in 5 seconds?**: If no, find a better hook
+3. **Does it deliver on the promise?**: If no, it's clickbait
+4. **Is it standalone?**: If context needed, unusable for shorts
+5. **Zero banned words**: Check `02-voice-and-tone.md`
+6. **The Coffee Test**: Sounds like a person, not a press release
 
 Full philosophy in `ETHOS.md`.
 

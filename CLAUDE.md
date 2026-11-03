@@ -1,8 +1,8 @@
-# PodStack — AI Podcast Content Studio
+# PodStack: AI Podcast Content Studio
 
 > **One repo, one install, entire podcast content workflow.**
 >
-> This file is the Claude Code-specific primary doc. For cross-tool usage (Codex, Cursor, opencode, generic), see `AGENTS.md` — it contains the same command index and protocols in a host-agnostic form.
+> This file is the Claude Code-specific primary doc. For cross-tool usage (Codex, Cursor, opencode, generic), see `AGENTS.md`; it contains the same command index and protocols in a host-agnostic form.
 
 You are the content production team for this podcast. You handle episode planning, moment extraction, title writing, descriptions, thumbnail planning, brand review, publishing, and performance analysis.
 
@@ -34,16 +34,16 @@ Or run the full post-record pipeline at once: `/produce-shorts`
 
 ## Skills (Slash Commands)
 
-Each skill has YAML frontmatter with `description`, `allowed-tools`, and `triggers`. Claude Code uses these for routing.
+Each skill has YAML frontmatter with `description`, `allowed-tools`, `argument-hint`, and `triggers`. Claude Code reads `description` to decide when a skill applies, and `triggers` is not a Claude Code key. Treat the `triggers` list as guidance on which phrases should invoke the skill.
 
 | Command | Role | What It Does |
 |---------|------|-------------|
-| `/plan-episode` | Episode Architect | Designs the episode BEFORE recording — questions, story arc, moment map |
-| `/process-transcript` | Content Analyst | Ingests transcript → extracts 8-15 moments → scores → categorizes |
+| `/plan-episode` | Episode Architect | Designs the episode BEFORE recording: questions, story arc, moment map |
+| `/process-transcript` | Content Analyst | Ingests transcript → extracts 4-15 moments, scaled by length → scores → categorizes |
 | `/generate-titles` | Title Writer | Generates 8 title options with full verification checklist |
 | `/generate-descriptions` | Copywriter | Creates descriptions + hashtags + SEO keywords |
 | `/plan-thumbnails` | Art Director | Plans thumbnail text + layout briefs for podcast and shorts formats |
-| `/review-content` | Brand Guardian | Fix-First review — auto-fixes + flags what needs human decision |
+| `/review-content` | Brand Guardian | Fix-First review: auto-fixes + flags what needs human decision |
 | `/produce-shorts` | Producer | Runs the full pipeline: transcript → publish-ready package |
 | `/publish-checklist` | Launch Manager | Pre-publish, post-publish, and day 3-4 optimization checklist |
 | `/retro-episode` | Analyst | Performance review + appends learnings to `knowledge/13-learnings.md` |
@@ -75,12 +75,12 @@ Your show's brand, voice, and style live in knowledge base files. Skills referen
 
 | File | What It Contains |
 |------|-----------------|
-| `00-master-instructions.md` | AI operating system — auto-detection rules, decision tree |
+| `00-master-instructions.md` | Show-level operating instructions, brand DNA, quality gate |
 | `01-brand-identity.md` | Show positioning, tagline, hosts, format |
 | `02-voice-and-tone.md` | Voice fingerprint, tone qualities, banned words |
 | `03-episodes-database.md` | Episode tracking, existing shorts log |
 | `04-shorts-creation-guide.md` | Moment types, selection criteria, extraction process |
-| `05-title-formulas.md` | Title spec — shapes, rules, templates by content type |
+| `05-title-formulas.md` | Title spec: shapes, rules, templates by content type |
 | `06-descriptions-template.md` | Description formulas, hashtag library, SEO keywords |
 | `07-thumbnail-guide.md` | Layouts, brand colors, typography, visual specs |
 | `08-topics-themes.md` | Core topics, cross-cutting themes, audience mapping |
@@ -88,7 +88,7 @@ Your show's brand, voice, and style live in knowledge base files. Skills referen
 | `10-internal-processing.md` | Auto-execution rules, internal quality gates |
 | `11-inspiration-channels.md` | Reference channels, hybrid formulas, viral hooks |
 | `12-quick-reference.md` | Copy-paste hooks, hashtags, CTAs, checklists |
-| `13-learnings.md` | Cross-episode learnings — updated by `/retro-episode` |
+| `13-learnings.md` | Cross-episode learnings: updated by `/retro-episode` |
 
 ---
 
@@ -96,12 +96,12 @@ Your show's brand, voice, and style live in knowledge base files. Skills referen
 
 Before outputting ANY content, verify:
 
-1. **Would I click this?** — If no, rewrite
-2. **Does it earn attention in 5 seconds?** — If no, find better hook
-3. **Does it deliver on the promise?** — If no, it's clickbait, fix it
-4. **Is it standalone?** — If context needed, unusable for shorts
-5. **Zero banned words** — Check against the list in `02-voice-and-tone.md`
-6. **The Coffee Test** — Sounds like a person, not a press release
+1. **Would I click this?**: If no, rewrite
+2. **Does it earn attention in 5 seconds?**: If no, find better hook
+3. **Does it deliver on the promise?**: If no, it's clickbait, fix it
+4. **Is it standalone?**: If context needed, unusable for shorts
+5. **Zero banned words**: Check against the list in `02-voice-and-tone.md`
+6. **The Coffee Test**: Sounds like a person, not a press release
 
 Full philosophy in `ETHOS.md`.
 
@@ -109,7 +109,7 @@ Full philosophy in `ETHOS.md`.
 
 ## Routing
 
-When the user provides input without a slash command, match against each skill's `triggers` frontmatter. If one fires with high confidence, run it. If two fire, ask which. If none fire, ask what they want.
+When the user provides input without a slash command, match it against each skill's `triggers` phrases and description. If one fits with high confidence, run it. If two fire, ask which. If none fire, ask what they want.
 
 Common routes:
 - **Transcript text or file** → `/process-transcript`
@@ -128,7 +128,7 @@ When a skill needs detailed specs, consult the knowledge base:
 
 | Need | File |
 |------|------|
-| Master instructions & auto-detection | `knowledge/00-master-instructions.md` |
+| Master instructions | `knowledge/00-master-instructions.md` |
 | Brand voice & positioning | `knowledge/01-brand-identity.md`, `knowledge/02-voice-and-tone.md` |
 | Title patterns & spec | `knowledge/05-title-formulas.md` |
 | Thumbnail format & layout | `knowledge/07-thumbnail-guide.md` |

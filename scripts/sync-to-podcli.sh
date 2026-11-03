@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Sync the current PodStack into a podcli project.
 #
@@ -7,15 +7,21 @@ set -e
 #   ./scripts/sync-to-podcli.sh <path-to-podcli>
 #
 # Behavior:
-#   - Replaces podcli's .claude/commands/*.md with current PodStack commands
-#     (deletes stale commands that no longer exist upstream)
-#   - Copies any missing knowledge-base templates into podcli's knowledge/
-#     (does NOT overwrite existing knowledge files — your edits are safe)
-#   - Writes CLAUDE.md.podstack alongside podcli's CLAUDE.md for manual merge
+#   - Updates podcli's .claude/commands/*.md with current PodStack commands
+#   - Records what it installed, with checksums, in .claude/commands/.podstack-manifest
+#   - Saves a .bak copy before overwriting a command you edited
+#   - Deletes only commands listed in the previous manifest that PodStack no longer
+#     ships and that you have not edited. Your own commands are never touched.
+#   - Copies any missing knowledge-base templates into podcli's knowledge dir
+#     (.podcli/knowledge if .podcli/ exists, else knowledge/). Never overwrites them.
+#   - Writes CLAUDE.podstack.md, AGENTS.podstack.md, and ETHOS.podstack.md alongside
+#     podcli's own docs for manual merge
 #   - Does NOT touch podcli's CLAUDE.md, README, or source
-#   - Does NOT commit — run `git status` in podcli afterward to review
+#   - Does NOT commit. Run `git status` in podcli afterward to review
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=scripts/manifest.sh
+source "$SCRIPT_DIR/scripts/manifest.sh"
 PODCLI_DIR="${1:-}"
 
 TEAL='\033[0;36m'
@@ -38,38 +44,34 @@ fi
 VERSION_STR="$(cat "$SCRIPT_DIR/VERSION" 2>/dev/null || echo "dev")"
 
 echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${TEAL}  Sync PodStack v${VERSION_STR} → podcli${NC}"
+echo -e "${TEAL}  Sync PodStack v${VERSION_STR} to podcli${NC}"
 echo -e "${DIM}  target: ${PODCLI_DIR}${NC}"
 echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-# Decide knowledge dir inside podcli (.podcli/knowledge if present, else knowledge/)
-KNOWLEDGE_DIR="knowledge"
-if [ -d "$PODCLI_DIR/.podcli/knowledge" ]; then
-    KNOWLEDGE_DIR=".podcli/knowledge"
-fi
+KNOWLEDGE_DIR="$(detect_knowledge_dir "$PODCLI_DIR")"
 
-# 1. Sync commands (replace + delete stale)
+# 1. Sync commands. The manifest tells shipped files apart from the user's own.
 echo -e "\n${YELLOW}Syncing .claude/commands/ ...${NC}"
-mkdir -p "$PODCLI_DIR/.claude/commands"
+COMMANDS_DIR="$PODCLI_DIR/.claude/commands"
+mkdir -p "$COMMANDS_DIR"
+manifest_begin
 
-# Delete any command files in target that are NOT in source (stale upstream-removed files)
-for existing in "$PODCLI_DIR/.claude/commands/"*.md; do
-    [ -f "$existing" ] || continue
-    name=$(basename "$existing")
-    if [ ! -f "$SCRIPT_DIR/commands/$name" ]; then
-        rm "$existing"
-        echo -e "  ${RED}-${NC} $name (stale, removed upstream)"
-    fi
-done
-
-# Copy current source commands, overwriting
 for cmd in "$SCRIPT_DIR/commands/"*.md; do
     name=$(basename "$cmd")
-    cp "$cmd" "$PODCLI_DIR/.claude/commands/$name"
-    echo -e "  ${GREEN}✓${NC} $name"
+    install_managed "$cmd" "$COMMANDS_DIR/$name" 1
+    case "$INSTALL_STATUS" in
+        updated)   echo -e "  ${GREEN}↻${NC} $name (updated)" ;;
+        backed-up) echo -e "  ${YELLOW}↻${NC} $name (updated, your edits saved to $name.bak)" ;;
+        *)         echo -e "  ${GREEN}✓${NC} $name" ;;
+    esac
 done
 
-# 2. Sync knowledge templates (never overwrite — user edits are sacred)
+remove_stale "$COMMANDS_DIR" | while read -r line; do
+    echo -e "  ${RED}-${NC} $line"
+done
+manifest_commit "$COMMANDS_DIR"
+
+# 2. Sync knowledge templates (never overwrite; user edits are kept)
 echo -e "\n${YELLOW}Syncing ${KNOWLEDGE_DIR}/ (new files only, no overwrites)...${NC}"
 mkdir -p "$PODCLI_DIR/$KNOWLEDGE_DIR"
 
@@ -83,7 +85,7 @@ for tmpl in "$SCRIPT_DIR/templates/"*.md; do
     fi
 done
 
-# 3. CLAUDE.md + AGENTS.md + ETHOS.md — write as .podstack.md suffix so podcli's own copy is preserved
+# 3. CLAUDE.md + AGENTS.md + ETHOS.md: write with a .podstack.md suffix so podcli's own copy is preserved
 echo -e "\n${YELLOW}Writing PodStack docs as *.podstack.md (merge manually if desired)...${NC}"
 for doc in CLAUDE.md AGENTS.md ETHOS.md; do
     if [ -f "$SCRIPT_DIR/$doc" ]; then

@@ -10,25 +10,27 @@ triggers:
   - seo keywords
 ---
 
-# /generate-descriptions — Copywriter
+# /generate-descriptions: Copywriter
 
-> You are the copywriter for this podcast. You write descriptions that hook, attribute, and convert — for both YouTube Shorts and long-form episodes.
+> You are the copywriter for this podcast. You write descriptions that hook, attribute, and convert, for both YouTube Shorts and long-form episodes.
 
 ---
 
 ## Before Starting
 
 Read:
-- `knowledge/06-descriptions-template.md` — templates, hashtag library, SEO keywords
-- `knowledge/01-brand-identity.md` — show name, hosts, links
-- `knowledge/02-voice-and-tone.md` — voice and banned words
+- `knowledge/06-descriptions-template.md`: templates, hashtag library, SEO keywords
+- `knowledge/01-brand-identity.md`: show name, hosts, links
+- `knowledge/02-voice-and-tone.md`: voice and banned words
+
+If using podcli, replace `knowledge/` with `.podcli/knowledge/`.
 
 ---
 
 ## Shorts Description Formula
 
 ```
-[HOOK — surprising claim or question, under 100 chars]
+[HOOK, surprising claim or question, under 100 chars]
 
 [Guest Name] from [Company] [explains/reveals/shares] [topic].
 
@@ -38,8 +40,8 @@ Read:
 ```
 
 ### Rules
-- **Total length:** Under 150 characters for full visibility
-- **First line:** Hook visible in preview (~60 chars mobile, ~100 desktop)
+- **First line:** Under 150 characters so it shows in full. Hook lands in the first ~60 chars on mobile, ~100 on desktop
+- **Length:** The 150-character limit applies to the first line only. Attribution, link, and hashtags follow it
 - **No fluff:** No "In this video..." or "Welcome back..."
 - **Guest attribution:** Always include name and company/org
 - **Hashtags:** 3-5 total. Show hashtag first
@@ -50,11 +52,11 @@ Read:
 ## Long-Form Description Formula
 
 ```
-[HOOK LINE — the one thing that makes this episode worth watching]
+[HOOK LINE, the one thing that makes this episode worth watching]
 
 [2-3 sentences expanding on what viewers will learn]
 
-In this episode, [Host] talks with [Guest], [Title] at [Company], about [topic].
+[Guest], [Title] at [Company], [states their central claim in one sentence]. [Host] and [Guest] get into [topic].
 
 We cover:
 • [Point 1]
@@ -75,8 +77,10 @@ Company: [URL]
 Website: [URL]
 Twitter/X: [URL]
 
-#[ShowHashtag] #[Topic1] #[Topic2] #Founders #Startups
+#[ShowHashtag] #[Topic1] #[Topic2] #[AudienceTag]
 ```
+
+Take hashtags from the Hashtag Library in `knowledge/06-descriptions-template.md`. Do not invent defaults.
 
 ---
 
@@ -107,7 +111,7 @@ Automatically extract and weave in:
 
 ### For Long-Form
 ```markdown
-### Episode [X]: [Guest] — [Company]
+### Episode [X]: [Guest]: [Company]
 
 **Description (ready to paste):**
 [Full long-form description]
@@ -123,16 +127,16 @@ Automatically extract and weave in:
 - [ ] No banned words
 - [ ] Guest name and company attributed
 - [ ] Show hashtag included
-- [ ] Shorts descriptions under 150 chars
+- [ ] Shorts description first line under 150 characters
 - [ ] No generic intros
 
 ---
 
 ## Completion
 
-Return one of (per `CLAUDE.md` Completion Protocol):
+Return one of (per the Completion Protocol in `CLAUDE.md` or `AGENTS.md`, whichever your tool reads):
 
-- **DONE** — All descriptions produced, all quality gates pass.
-- **DONE_WITH_CONCERNS** — Written but one or more descriptions had to stretch to hit the hashtag count or hook quality is borderline. Flag which.
-- **BLOCKED** — Not enough source material (no quote, no guest context) to write a truthful hook.
-- **NEEDS_INPUT** — Missing timestamps for long-form chapters, missing guest social links, or missing show links.
+- **DONE**: All descriptions produced, all quality gates pass.
+- **DONE_WITH_CONCERNS**: Written but one or more descriptions had to stretch to hit the hashtag count or hook quality is borderline. Flag which.
+- **BLOCKED**: Not enough source material (no quote, no guest context) to write a truthful hook.
+- **NEEDS_INPUT**: Missing timestamps for long-form chapters, missing guest social links, or missing show links.

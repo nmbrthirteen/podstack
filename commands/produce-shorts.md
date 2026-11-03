@@ -1,6 +1,6 @@
 ---
 description: Full pipeline from transcript to publish-ready content package
-allowed-tools: Read, Write, Edit, Task
+allowed-tools: Read, Write, Edit, Task, AskUserQuestion
 argument-hint: [transcript-file-or-episode-number]
 triggers:
   - process episode
@@ -11,7 +11,7 @@ triggers:
   - run the full thing
 ---
 
-# /produce-shorts — Producer
+# /produce-shorts: Producer
 
 > You are the head producer. You run the full content pipeline from raw transcript to publish-ready package. This is the master orchestrator.
 
@@ -20,14 +20,18 @@ triggers:
 ## Before Starting
 
 Read the full knowledge base to understand the show:
-- `knowledge/01-brand-identity.md` — who the show is
-- `knowledge/02-voice-and-tone.md` — voice, banned words
-- `knowledge/03-episodes-database.md` — existing content (dedup)
-- `knowledge/04-shorts-creation-guide.md` — moment criteria
-- `knowledge/05-title-formulas.md` — title spec
-- `knowledge/06-descriptions-template.md` — description templates
-- `knowledge/07-thumbnail-guide.md` — visual specs
-- `knowledge/13-learnings.md` — past retro patterns (what worked, what didn't)
+- `knowledge/01-brand-identity.md`: who the show is
+- `knowledge/02-voice-and-tone.md`: voice, banned words
+- `knowledge/03-episodes-database.md`: existing content (dedup)
+- `knowledge/04-shorts-creation-guide.md`: moment criteria
+- `knowledge/05-title-formulas.md`: title spec
+- `knowledge/06-descriptions-template.md`: description templates
+- `knowledge/07-thumbnail-guide.md`: visual specs
+- `knowledge/13-learnings.md`: past retro patterns (what worked, what didn't)
+
+If using podcli, replace `knowledge/` with `.podcli/knowledge/`.
+
+If the podcli MCP server is connected, Phase 1 uses `transcribe_podcast` (audio or video input), `suggest_clips` (extra candidates), and `clip_history` (duplicate check), as described in `/process-transcript`. Without it, work from text files.
 
 ---
 
@@ -68,7 +72,7 @@ Shorts descriptions (hook + attribution + link + hashtags) and full episode long
 Two-line text for both podcast and shorts formats per moment.
 
 ### Phase 5: Quality Review
-*Runs `/review-content` logic — Fix-First + specialist dispatch*
+*Runs `/review-content` logic (Fix-First + specialist dispatch)*
 
 Parallel specialists: voice, banned words, title, standalone, clickbait, SEO, dedup. Auto-fix mechanical issues. Batch ASK items for user.
 
@@ -90,13 +94,13 @@ Partial output preserved at: [path if any]
 Needed to unblock: [specific ask]
 ```
 
-Do not proceed to downstream phases when an upstream phase is BLOCKED — downstream output would be corrupt.
+Do not proceed to downstream phases when an upstream phase is BLOCKED. Downstream output would be corrupt.
 
 ---
 
 ## Phase Handoff
 
-Each phase consumes upstream output and passes structured state downstream. Phase 1's moment list is the contract — if it's empty, Phase 2 has nothing to do.
+Each phase consumes upstream output and passes structured state downstream. Phase 1's moment list is the contract. If it's empty, Phase 2 has nothing to do.
 
 | Phase | Consumes | Produces |
 |-------|----------|----------|
@@ -112,7 +116,7 @@ Each phase consumes upstream output and passes structured state downstream. Phas
 ## Output Format
 
 ```markdown
-# Episode [X]: [Guest] — [Company]
+# Episode [X]: [Guest]: [Company]
 ## Complete Content Package
 
 **Prepared:** [Date]
@@ -148,7 +152,7 @@ Each phase consumes upstream output and passes structured state downstream. Phas
 
 ### Short 1: [Best Title]
 
-**Timestamp:** [XX:XX — XX:XX]
+**Timestamp:** [XX:XX to XX:XX]
 **Duration:** ~[XX]s
 **Category:** [Type]
 **Score:** [X/20]
@@ -194,7 +198,7 @@ Each phase consumes upstream output and passes structured state downstream. Phas
 
 ---
 
-## Pipeline Report (per CLAUDE.md Completion Protocol)
+## Pipeline Report (per the Completion Protocol in CLAUDE.md or AGENTS.md)
 
 | Phase | Status | Notes |
 |-------|--------|-------|
@@ -217,6 +221,7 @@ Each phase consumes upstream output and passes structured state downstream. Phas
 1. **Update episode database:** Add to `knowledge/03-episodes-database.md`
 2. **Save package:** Write to `episodes/ep[XX]-[guest]-content-package.md`
 3. **Posting order:** Vary topics, lead with strongest hooks, mix energy levels
+4. **Render clips (podcli MCP only):** If `create_clip` is available and the user gave you the video file, offer to render the approved moments with captions. Without podcli, hand the timestamps to the editor
 
 ---
 
@@ -224,7 +229,7 @@ Each phase consumes upstream output and passes structured state downstream. Phas
 
 The Producer emits a rollup status based on the 6 phases:
 
-- **DONE** — All 6 phases DONE, zero BLOCKING issues after review.
-- **DONE_WITH_CONCERNS** — All phases completed, but review surfaced WARNING items that need user call, or one phase was DONE_WITH_CONCERNS.
-- **BLOCKED** — Any phase hit the Three-Strike Rule or returned BLOCKED. Pipeline halted. Partial output preserved.
-- **NEEDS_INPUT** — A phase needs missing input (episode number, guest name, banned-words file, etc.). Ask once, batched, then resume.
+- **DONE**: All 6 phases DONE, zero BLOCKING issues after review.
+- **DONE_WITH_CONCERNS**: All phases completed, but review surfaced WARNING items that need user call, or one phase was DONE_WITH_CONCERNS.
+- **BLOCKED**: Any phase hit the Three-Strike Rule or returned BLOCKED. Pipeline halted. Partial output preserved.
+- **NEEDS_INPUT**: A phase needs missing input (episode number, guest name, banned-words file, etc.). Ask once, batched, then resume.

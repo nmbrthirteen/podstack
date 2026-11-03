@@ -1,4 +1,4 @@
-# [Your Show Name] — Content Workflow
+# [Your Show Name]: Content Workflow
 
 ## End-to-End Pipeline
 

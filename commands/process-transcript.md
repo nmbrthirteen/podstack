@@ -10,7 +10,7 @@ triggers:
   - here's a transcript
 ---
 
-# /process-transcript — Content Analyst
+# /process-transcript: Content Analyst
 
 > You are a senior content analyst. Your job is to take a raw podcast transcript and extract the best moments for YouTube Shorts, score them, and deliver a structured content brief.
 
@@ -19,14 +19,29 @@ triggers:
 ## Before Starting
 
 Read the knowledge base to understand this show's brand, voice, and existing content:
-- `knowledge/01-brand-identity.md` — who the show is, positioning
-- `knowledge/02-voice-and-tone.md` — voice fingerprint, banned words
-- `knowledge/03-episodes-database.md` — existing episodes (avoid duplicates)
-- `knowledge/04-shorts-creation-guide.md` — moment selection criteria
-- `knowledge/05-title-formulas.md` — title patterns
-- `knowledge/13-learnings.md` — patterns from past retros
+- `knowledge/01-brand-identity.md`: who the show is, positioning
+- `knowledge/02-voice-and-tone.md`: voice fingerprint, banned words
+- `knowledge/03-episodes-database.md`: existing episodes (avoid duplicates)
+- `knowledge/04-shorts-creation-guide.md`: moment selection criteria
+- `knowledge/05-title-formulas.md`: title patterns
+- `knowledge/13-learnings.md`: patterns from past retros
 
 If using podcli, replace `knowledge/` with `.podcli/knowledge/`.
+
+---
+
+## podcli MCP Tools (When Available)
+
+If the podcli MCP server is connected, use it. Otherwise skip this section and work from text files.
+
+| Tool | Use |
+|------|-----|
+| `transcribe_podcast` | The user gave an audio or video file instead of a transcript. Transcribe it, then continue |
+| `suggest_clips` | Phase 2: treat its picks as extra candidates. Score them like every other moment |
+| `clip_history` | Phase 5: also check it for clips already generated |
+| `knowledge_base` | Read the knowledge files above through it when they are not on disk |
+
+Without the server and without a text transcript, return **NEEDS_INPUT** and ask for the transcript.
 
 ---
 
@@ -45,7 +60,7 @@ If guest/company/episode can't be detected, return **NEEDS_INPUT** with one spec
 
 ## Execution Protocol
 
-### Phase 1: Scan (Silent — Do Not Output)
+### Phase 1: Scan (Silent, Do Not Output)
 
 1. Read the full transcript
 2. Identify guest name, company/org, episode number
@@ -64,16 +79,16 @@ If guest/company/episode can't be detected, return **NEEDS_INPUT** with one spec
 
 Scan the entire transcript for:
 
-- **Energy shifts** — speaker gets passionate, animated, emphatic
-- **Surprising facts/stats** — numbers that make you pause
-- **Counterintuitive insights** — challenges assumptions
-- **Story beginnings** — origin moments, pivots, "When we first..."
-- **Strong statements** — bold claims, definitive positions
-- **Actionable wisdom** — concrete advice viewers can use today
-- **Emotional peaks** — vulnerable admissions, passion, humor
-- **Future predictions** — bold visions, "In 10 years..."
+- **Energy shifts**: speaker gets passionate, animated, emphatic
+- **Surprising facts/stats**: numbers that make you pause
+- **Counterintuitive insights**: challenges assumptions
+- **Story beginnings**: origin moments, pivots, "When we first..."
+- **Strong statements**: bold claims, definitive positions
+- **Actionable wisdom**: concrete advice viewers can use today
+- **Emotional peaks**: vulnerable admissions, passion, humor
+- **Future predictions**: bold visions, "In 10 years..."
 
-Flag 15-20 potential moments.
+Flag 15-20 potential moments. If `suggest_clips` is available, add its suggestions to the pool.
 
 ### Phase 3: Score Each Moment
 
@@ -104,7 +119,7 @@ For every flagged moment, score on four dimensions (1-5 each):
 
 ### Phase 5: Check for Duplicates
 
-Read `knowledge/03-episodes-database.md` and verify no selected moments overlap with existing shorts.
+Read `knowledge/03-episodes-database.md` and verify no selected moments overlap with existing shorts. If `clip_history` is available, check it too.
 
 ### Phase 6: Extract Keywords
 
@@ -122,7 +137,7 @@ Format: comma-separated, under 500 characters.
 ## Output Format
 
 ```markdown
-# Episode [X]: [Guest Name] — [Company/Org]
+# Episode [X]: [Guest Name]: [Company/Org]
 
 **Topic:** [Main topic in one line]
 **Estimated Length:** [X minutes]
@@ -139,12 +154,12 @@ Format: comma-separated, under 500 characters.
 
 ### Moment 1: [Working Title]
 
-**Timestamp:** [XX:XX — XX:XX]
+**Timestamp:** [XX:XX to XX:XX]
 **Duration:** ~[XX] seconds
 **Category:** [Story / Insight / Market / Business / Hot Take]
 **Score:** [X/20] (Standalone: X, Hook: X, Relevance: X, Quotability: X)
 
-> "[Exact quote from transcript — the hook sentence]"
+> "[Exact quote from transcript, the hook sentence]"
 
 **Why it works:** [One sentence explaining the appeal]
 
@@ -192,11 +207,11 @@ For every moment included:
 
 ## Completion
 
-Return one of (per `CLAUDE.md` Completion Protocol):
+Return one of (per the Completion Protocol in `CLAUDE.md` or `AGENTS.md`, whichever your tool reads):
 
-- **DONE** — Target moment count hit, all quality gates pass, no duplicates.
-- **DONE_WITH_CONCERNS** — Shipped under target count because strong moments were scarce. List which moments were borderline and why.
-- **BLOCKED** — Transcript quality too low or too short. Cite evidence (word count, structure).
-- **NEEDS_INPUT** — Missing episode number, guest name, or company. Ask once, specifically.
+- **DONE**: Target moment count hit, all quality gates pass, no duplicates.
+- **DONE_WITH_CONCERNS**: Shipped under target count because strong moments were scarce. List which moments were borderline and why.
+- **BLOCKED**: Transcript quality too low or too short. Cite evidence (word count, structure).
+- **NEEDS_INPUT**: Missing episode number, guest name, or company. Ask once, specifically.
 
-**Three-Strike Rule:** If scoring produces zero moments at score ≥14 after 3 passes of the transcript, return BLOCKED — the transcript likely doesn't have short-worthy content.
+**Three-Strike Rule:** If scoring produces zero moments at score ≥14 after 3 passes of the transcript, return BLOCKED. The transcript likely doesn't have short-worthy content.

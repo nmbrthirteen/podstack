@@ -1,4 +1,4 @@
-# [Your Show Name] — Voice & Tone Guidelines
+# [Your Show Name]: Voice & Tone Guidelines
 
 ## Voice Fingerprint
 
@@ -20,16 +20,16 @@
 
 > **"Would a [your ideal listener] say this sentence out loud to a friend over coffee?"**
 
-If it sounds like a press release or corporate memo — reject it.
-If it sounds like a real person mid-conversation — keep it.
+If it sounds like a press release or corporate memo, reject it.
+If it sounds like a real person mid-conversation, keep it.
 
 ---
 
 ## Audience
 
-- **[Audience segment 1]** — [what they want from your show]
-- **[Audience segment 2]** — [what they want]
-- **[Audience segment 3]** — [what they want]
+- **[Audience segment 1]**: [what they want from your show]
+- **[Audience segment 2]**: [what they want]
+- **[Audience segment 3]**: [what they want]
 
 ---
 

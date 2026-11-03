@@ -1,4 +1,4 @@
-# [Your Show Name] — Thumbnail Guide
+# [Your Show Name]: Thumbnail Guide
 
 ## Two-Format System
 
@@ -18,8 +18,8 @@
 ```
 
 ### Text Rules
-- **Line 1:** [Your primary text style — e.g., white, lowercase]
-- **Line 2:** [Your accent style — e.g., teal highlight box]
+- **Line 1:** [Your primary text style, e.g., white, lowercase]
+- **Line 2:** [Your accent style, e.g., teal highlight box]
 - **Max:** 4-6 words total
 - **Feel:** Conversational
 

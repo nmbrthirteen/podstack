@@ -1,4 +1,4 @@
-# [Your Show Name] — Shorts Creation Guide
+# [Your Show Name]: Shorts Creation Guide
 
 ## Specifications
 
@@ -13,13 +13,13 @@
 
 ## High-Value Moment Types
 
-1. **Surprising Facts/Statistics** — Numbers that make viewers pause
-2. **Counterintuitive Insights** — Challenges common assumptions
-3. **Actionable Wisdom** — Advice they can use today
-4. **Origin Stories** — The "aha" moment, early struggles, pivots
-5. **Unconventional Tactics** — Against-the-grain strategies
-6. **Future Predictions** — Bold visions
-7. **Emotional Peaks** — Passionate statements, vulnerable admissions
+1. **Surprising Facts/Statistics**: Numbers that make viewers pause
+2. **Counterintuitive Insights**: Challenges common assumptions
+3. **Actionable Wisdom**: Advice they can use today
+4. **Origin Stories**: The "aha" moment, early struggles, pivots
+5. **Unconventional Tactics**: Against-the-grain strategies
+6. **Future Predictions**: Bold visions
+7. **Emotional Peaks**: Passionate statements, vulnerable admissions
 
 ---
 

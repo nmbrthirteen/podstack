@@ -1,12 +1,12 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # PodStack Setup
 # Installs slash commands, knowledge base templates, and project docs into your project.
 # Host-agnostic: works with Claude Code, OpenAI Codex, Cursor, opencode, or generic.
 #
 # Usage:
-#   ./setup.sh [project-dir] [--host <name>]
+#   ./setup.sh [project-dir] [--host <name>] [--update]
 #
 #   --host claude-code   (default) installs to .claude/commands/, copies CLAUDE.md
 #   --host codex         installs to .codex/prompts/, copies AGENTS.md as entry point
@@ -14,21 +14,34 @@ set -e
 #   --host opencode      installs to .opencode/commands/
 #   --host generic       copies commands/ and AGENTS.md to project root; no tool integration
 #   --host auto          (default when --host not passed) auto-detect from existing dirs
+#   --update             overwrite commands PodStack installed earlier; edited files are
+#                        saved as <file>.bak first. Without it, existing files are skipped.
+#
+# Recommended layout: clone PodStack to <project>/.podstack and run .podstack/setup.sh
+# from the project root. Running it from inside a clone named .podstack installs into the parent.
 #
 # Examples:
 #   ./setup.sh                         # auto-detect, install to current dir
 #   ./setup.sh ~/my-podcast            # auto-detect, install to ~/my-podcast
 #   ./setup.sh --host codex            # force Codex layout
 #   ./setup.sh . --host cursor         # force Cursor layout
+#   .podstack/setup.sh --update        # refresh installed commands after git pull
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/manifest.sh
+source "$SCRIPT_DIR/scripts/manifest.sh"
 
 # Parse args: first non-flag is PROJECT_DIR, --host takes a value
 PROJECT_DIR="."
 HOST="auto"
+UPDATE=0
 while [ $# -gt 0 ]; do
     case "$1" in
         --host)
+            if [ $# -lt 2 ] || [[ "$2" == -* ]]; then
+                echo "Error: --host needs a value (claude-code, codex, cursor, opencode, generic, auto)" >&2
+                exit 1
+            fi
             HOST="$2"
             shift 2
             ;;
@@ -36,8 +49,12 @@ while [ $# -gt 0 ]; do
             HOST="${1#*=}"
             shift
             ;;
+        --update)
+            UPDATE=1
+            shift
+            ;;
         -h|--help)
-            sed -n '3,22p' "$0"
+            sed -n '3,34 p' "$0"
             exit 0
             ;;
         *)
@@ -46,6 +63,18 @@ while [ $# -gt 0 ]; do
             ;;
     esac
 done
+
+mkdir -p "$PROJECT_DIR"
+PROJECT_DIR="$(cd "$PROJECT_DIR" && pwd)"
+if [ "$PROJECT_DIR" = "$SCRIPT_DIR" ]; then
+    if [ "$(basename "$SCRIPT_DIR")" = ".podstack" ]; then
+        PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+    else
+        echo "Error: refusing to install into the PodStack clone itself." >&2
+        echo "Run setup.sh from your project, or pass the project directory." >&2
+        exit 1
+    fi
+fi
 
 # Colors
 TEAL='\033[0;36m'
@@ -57,15 +86,15 @@ NC='\033[0m'
 VERSION_STR="$(cat "$SCRIPT_DIR/VERSION" 2>/dev/null || echo "dev")"
 
 echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${TEAL}  PodStack v${VERSION_STR} — Podcast Content Workflow${NC}"
+echo -e "${TEAL}  PodStack v${VERSION_STR}: Podcast Content Workflow${NC}"
 echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-# Auto-detect host if not specified
+# Auto-detect host if not specified (first match wins)
 if [ "$HOST" = "auto" ]; then
     if [ -d "$PROJECT_DIR/.claude" ]; then
         HOST="claude-code"
-    elif [ -d "$PROJECT_DIR/.codex" ] || [ -f "$PROJECT_DIR/AGENTS.md" ] && grep -qi "codex" "$PROJECT_DIR/AGENTS.md" 2>/dev/null; then
+    elif [ -d "$PROJECT_DIR/.codex" ]; then
         HOST="codex"
     elif [ -d "$PROJECT_DIR/.cursor" ]; then
         HOST="cursor"
@@ -73,7 +102,7 @@ if [ "$HOST" = "auto" ]; then
         HOST="opencode"
     else
         HOST="claude-code"
-        echo -e "${DIM}No host config detected — defaulting to Claude Code.${NC}"
+        echo -e "${DIM}No host config detected. Defaulting to Claude Code.${NC}"
         echo -e "${DIM}Pass --host codex|cursor|opencode|generic to install for another tool.${NC}"
         echo ""
     fi
@@ -81,10 +110,9 @@ fi
 
 echo -e "${GREEN}✓${NC} Host: ${HOST}"
 
-# Detect if we're in a podcli project (for knowledge base location)
-KNOWLEDGE_DIR="knowledge"
-if [ -d "$PROJECT_DIR/.podcli" ]; then
-    KNOWLEDGE_DIR=".podcli/knowledge"
+# Knowledge base location (.podcli/knowledge in a podcli project)
+KNOWLEDGE_DIR="$(detect_knowledge_dir "$PROJECT_DIR")"
+if [ "$KNOWLEDGE_DIR" = ".podcli/knowledge" ]; then
     echo -e "${GREEN}✓${NC} Detected podcli project"
 fi
 
@@ -125,33 +153,41 @@ esac
 # 1. Install commands
 echo -e "\n${YELLOW}Installing commands to ${COMMANDS_DIR}/...${NC}"
 mkdir -p "$COMMANDS_DIR"
+manifest_begin
+RENDERED="$(mktemp)"
+trap 'rm -f "$RENDERED"' EXIT
 
 for cmd in "$SCRIPT_DIR/commands/"*.md; do
     name=$(basename "$cmd" .md)
     dest="$COMMANDS_DIR/${name}.${COMMAND_EXT}"
 
-    if [ -f "$dest" ]; then
-        echo "  ⊘ ${name}.${COMMAND_EXT} (already exists, skipping)"
-        continue
-    fi
-
     if [ "$HOST" = "cursor" ]; then
-        # Cursor .mdc format: add alwaysApply: false, drop unknown keys, keep description
-        # We emit description + alwaysApply + manual-trigger body as-is.
+        # Cursor .mdc accepts description and alwaysApply; other keys are dropped.
         {
             echo "---"
-            awk '/^---$/{c++; next} c==1 && /^description:/ {print} c==1 && /^argument-hint:/ {print}' "$cmd"
+            awk '/^---$/ && c < 2 { c++; next } c == 1 && /^description:/ { print }' "$cmd"
             echo "alwaysApply: false"
             echo "---"
             echo ""
-            # Body after the closing frontmatter delimiter
-            awk '/^---$/{c++; next} c>=2' "$cmd"
-        } > "$dest"
+            awk '/^---$/ && c < 2 { c++; next } c >= 2' "$cmd"
+        } > "$RENDERED"
     else
-        cp "$cmd" "$dest"
+        cp "$cmd" "$RENDERED"
     fi
-    echo -e "  ${GREEN}✓${NC} ${name}.${COMMAND_EXT}"
+
+    install_managed "$RENDERED" "$dest" "$UPDATE"
+    case "$INSTALL_STATUS" in
+        installed|unchanged) echo -e "  ${GREEN}✓${NC} ${name}.${COMMAND_EXT}" ;;
+        updated)             echo -e "  ${GREEN}↻${NC} ${name}.${COMMAND_EXT} (updated)" ;;
+        backed-up)           echo -e "  ${YELLOW}↻${NC} ${name}.${COMMAND_EXT} (updated, your edits saved to ${name}.${COMMAND_EXT}.bak)" ;;
+        skipped)             echo "  ⊘ ${name}.${COMMAND_EXT} (already exists, skipping; use --update to overwrite)" ;;
+    esac
 done
+
+if [ "$UPDATE" = "1" ]; then
+    remove_stale "$COMMANDS_DIR" | while read -r line; do echo "  - $line"; done
+fi
+manifest_commit "$COMMANDS_DIR"
 
 # 2. Install knowledge base templates (same for every host)
 echo -e "\n${YELLOW}Installing knowledge base templates to ${KNOWLEDGE_DIR}/...${NC}"
@@ -190,7 +226,7 @@ if [ "$HOST" = "claude-code" ]; then
     fi
 fi
 
-# 4. Install ETHOS.md (content philosophy — host-agnostic)
+# 4. Install ETHOS.md (content philosophy, host-agnostic)
 echo -e "\n${YELLOW}Installing ETHOS.md...${NC}"
 if [ -f "$PROJECT_DIR/ETHOS.md" ]; then
     echo "  ⊘ ETHOS.md already exists, skipping"
@@ -214,11 +250,11 @@ echo ""
 case "$HOST" in
     claude-code)
         echo "  2. Open Claude Code and run:"
-        echo "       /plan-episode        — Design questions BEFORE recording"
-        echo "       /produce-shorts      — Full pipeline from transcript"
-        echo "       /process-transcript  — Just extract moments"
-        echo "       /generate-titles     — Just generate titles"
-        echo "       /retro-episode       — Performance review + learnings"
+        echo "       /plan-episode        - Design questions BEFORE recording"
+        echo "       /produce-shorts      - Full pipeline from transcript"
+        echo "       /process-transcript  - Just extract moments"
+        echo "       /generate-titles     - Just generate titles"
+        echo "       /retro-episode       - Performance review + learnings"
         ;;
     codex)
         echo "  2. Open Codex. It will read AGENTS.md at project root."
@@ -228,7 +264,7 @@ case "$HOST" in
     cursor)
         echo "  2. In Cursor, open a chat and invoke a rule:"
         echo "     \"Use the produce-shorts rule on [transcript]\""
-        echo "     Rules live in .cursor/rules/ — Cursor finds them by description."
+        echo "     Rules live in .cursor/rules/. Cursor finds them by description."
         ;;
     opencode)
         echo "  2. In opencode, run the command directly:"

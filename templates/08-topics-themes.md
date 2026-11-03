@@ -1,4 +1,4 @@
-# [Your Show Name] — Topics & Themes
+# [Your Show Name]: Topics & Themes
 
 ## Core Topic Areas
 
@@ -22,9 +22,9 @@
 
 <!-- These themes appear across multiple topics -->
 
-- **[Theme 1]** — [description]
-- **[Theme 2]** — [description]
-- **[Theme 3]** — [description]
+- **[Theme 1]**: [description]
+- **[Theme 2]**: [description]
+- **[Theme 3]**: [description]
 
 ---
 

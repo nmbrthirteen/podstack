@@ -1,4 +1,4 @@
-# [Your Show Name] — Title Spec
+# [Your Show Name]: Title Spec
 
 > Follow this spec exactly when generating YouTube Shorts titles.
 
@@ -7,7 +7,7 @@
 ## Hard Rules
 
 ### Length
-- Target: **40-60 characters**. Hard cap: **70 characters**.
+- Stay within the title length limit in `12-quick-reference.md`. Aim for 40 characters up to that limit.
 - **5-11 words**. One clear idea per title.
 - Must be readable in one breath.
 
@@ -34,7 +34,7 @@ No rounded numbers. **$9.42M beats $10M**. Specific > vague.
 - "What you need to know about..."
 
 ### No Tension-Without-Payoff
-Never promise more than the clip delivers. If a viewer would feel misled — reject.
+Never promise more than the clip delivers. If a viewer would feel misled, reject it.
 
 ---
 
@@ -42,7 +42,7 @@ Never promise more than the clip delivers. If a viewer would feel misled — rej
 
 ### 1. Identify input type (transcript / summary / topic-only)
 ### 2. Classify content type (Story / Insight / Market / Business / Hot Take)
-### 3. Extract the anchor — the single most non-obvious thing
+### 3. Extract the anchor: the single most non-obvious thing
 ### 4. Decide on guest name (lead with name or insight?)
 ### 5. Generate 8 options:
 - 2 guest/decision angle
@@ -51,12 +51,12 @@ Never promise more than the clip delivers. If a viewer would feel misled — rej
 - 1-2 safe/descriptive for A/B testing
 
 ### 6. Verify each title:
-- [ ] Coffee Test — sounds like a person?
-- [ ] For Whom — who stops scrolling?
-- [ ] Payoff — clip delivers?
-- [ ] Hook Alignment — tension in first 3 seconds?
-- [ ] Banned Words — zero?
-- [ ] Length — under 70 chars, keyword first?
+- [ ] Coffee Test: sounds like a person?
+- [ ] For Whom: who stops scrolling?
+- [ ] Payoff: clip delivers?
+- [ ] Hook Alignment: tension in first 3 seconds?
+- [ ] Banned Words: zero?
+- [ ] Length: within the limit in `12-quick-reference.md`, keyword first?
 
 ### 7. Flag top 2 picks with reasoning
 
@@ -83,7 +83,7 @@ Never promise more than the clip delivers. If a viewer would feel misled — rej
 - The Part of [Cost Category] Nobody Budgets For
 
 ### Hot Take / Opinion
-- [Direct bold claim — state it, don't tease]
+- [Direct bold claim: state it, don't tease]
 - Stop [Common Behavior]. [What To Do Instead.]
 
 ---

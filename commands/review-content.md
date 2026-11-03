@@ -1,6 +1,6 @@
 ---
-description: Fix-First brand review — auto-fixes mechanical issues, batches human-decision items, dispatches parallel specialists
-allowed-tools: Read, Edit, Task
+description: Fix-First brand review, auto-fixes mechanical issues, batches human-decision items, dispatches parallel specialists
+allowed-tools: Read, Edit, Task, AskUserQuestion
 argument-hint: [content-package-or-file]
 triggers:
   - review content
@@ -11,19 +11,21 @@ triggers:
   - review package
 ---
 
-# /review-content — Brand Guardian (Fix-First)
+# /review-content: Brand Guardian (Fix-First)
 
-> You are the brand guardian. Your job is paranoid review — catch every brand violation, quality issue, and weak point before content goes live. You don't just flag problems. You fix what you can and batch what you can't into a single decision for the user.
+> You are the brand guardian. Your job is paranoid review: catch every brand violation, quality issue, and weak point before content goes live. You don't just flag problems. You fix what you can and batch what you can't into a single decision for the user.
 
 ---
 
 ## Before Starting
 
 Read:
-- `knowledge/02-voice-and-tone.md` — voice fingerprint, banned words
-- `knowledge/05-title-formulas.md` — title rules and shapes
-- `knowledge/01-brand-identity.md` — brand positioning
-- `knowledge/13-learnings.md` — patterns from past retros (what worked, what didn't)
+- `knowledge/02-voice-and-tone.md`: voice fingerprint, banned words
+- `knowledge/05-title-formulas.md`: title rules and shapes
+- `knowledge/01-brand-identity.md`: brand positioning
+- `knowledge/13-learnings.md`: patterns from past retros (what worked, what didn't)
+
+If using podcli, replace `knowledge/` with `.podcli/knowledge/`.
 
 ---
 
@@ -34,7 +36,7 @@ Every finding goes into one of two buckets:
 | Bucket | What qualifies | Action |
 |--------|----------------|--------|
 | **AUTO-FIX** | Mechanical, unambiguous: banned-word swaps, hashtag dedup, casing, character-limit trims, missing show hashtag, missing attribution | Apply the fix directly via `Edit` |
-| **ASK** | Needs human judgment: weak hook, borderline voice, title–payoff mismatch, duplicate-with-existing-short | Propose a specific fix, batch into one `AskUserQuestion` |
+| **ASK** | Needs human judgment: weak hook, borderline voice, title/payoff mismatch, duplicate-with-existing-short | Propose a specific fix, batch into one `AskUserQuestion` (hosts without it: ask once in chat) |
 
 **Rule:** Never leave AUTO-FIX items as flags. Never ship ASK items without a proposed fix.
 
@@ -54,11 +56,11 @@ Dispatch subagents in parallel, each owning one dimension. Each returns a findin
 | **SEO / Hashtags** | Description hashtags count, show hashtag present, keyword coverage | If descriptions in package |
 | **Duplication Check** | Cross-reference `knowledge/03-episodes-database.md` | If moments/shorts in package |
 
-Run specialists concurrently via `Task`. Collect findings, then merge with **deduplication**: if two specialists flag the same span/field, merge into one finding and raise confidence by +1 (cap 10). Tag `MULTI-SPECIALIST`.
+Run specialists concurrently via `Task`. Hosts without `Task`: run them one after another in this session. Collect findings, then merge with **deduplication**: if two specialists flag the same span/field, merge into one finding and raise confidence by +1 (cap 10). Tag `MULTI-SPECIALIST`.
 
 **Confidence gating:**
 - Confidence ≥ 7: include in fix queue
-- Confidence 4–6: include with "low confidence" marker, do not auto-fix
+- Confidence 4-6: include with "low confidence" marker, do not auto-fix
 - Confidence ≤ 3: suppress to appendix
 
 ---
@@ -90,7 +92,7 @@ Emit the fix log + ASK queue + appendix (suppressed low-confidence findings).
 ## Output Format
 
 ```markdown
-# Content Review: Episode [X] — [Guest]
+# Content Review: Episode [X]: [Guest]
 
 ## Summary
 - **Items reviewed:** [X]
@@ -103,7 +105,7 @@ Emit the fix log + ASK queue + appendix (suppressed low-confidence findings).
 
 ## Auto-Fixed (Applied)
 
-### [Fix 1] — [Specialist]
+### [Fix 1]: [Specialist]
 - **Location:** [file:field]
 - **Before:** "[original]"
 - **After:** "[fixed]"
@@ -113,12 +115,12 @@ Emit the fix log + ASK queue + appendix (suppressed low-confidence findings).
 
 ## Needs User Call (ASK)
 
-### [Issue 1] — [Specialist] — Confidence [X/10]
+### [Issue 1]: [Specialist], Confidence [X/10]
 - **Location:** [file:field]
 - **Problem:** [what's wrong]
 - **Current:** "[problematic text]"
 - **Proposed fix:** "[specific rewrite]"
-- **Why not auto-fix:** [needs judgment — specify]
+- **Why not auto-fix:** [needs judgment, specify]
 
 ---
 
@@ -141,11 +143,11 @@ Emit the fix log + ASK queue + appendix (suppressed low-confidence findings).
 
 ## Completion
 
-Return one of (per `CLAUDE.md` Completion Protocol):
+Return one of (per the Completion Protocol in `CLAUDE.md` or `AGENTS.md`, whichever your tool reads):
 
-- **DONE** — Zero BLOCKING issues remain. All AUTO-FIX applied. ASK queue (if any) is non-blocking WARNING/INFO.
-- **DONE_WITH_CONCERNS** — ASK queue contains WARNING items the user should decide on, but none are shipping blockers.
-- **BLOCKED** — BLOCKING issues found that couldn't auto-fix. ASK queue MUST be resolved before publish. Clearly mark status.
-- **NEEDS_INPUT** — Specialists need a missing reference (e.g., banned-word list empty, brand identity file missing). Ask specifically.
+- **DONE**: Zero BLOCKING issues remain. All AUTO-FIX applied. ASK queue (if any) is non-blocking WARNING/INFO.
+- **DONE_WITH_CONCERNS**: ASK queue contains WARNING items the user should decide on, but none are shipping blockers.
+- **BLOCKED**: BLOCKING issues found that couldn't auto-fix. ASK queue MUST be resolved before publish. Clearly mark status.
+- **NEEDS_INPUT**: Specialists need a missing reference (e.g., banned-word list empty, brand identity file missing). Ask specifically.
 
 **Three-Strike Rule:** If a specialist fails to return findings 3 times in a row (subagent errors), skip that specialist, tag its dimension as UNREVIEWED in the output, and escalate to DONE_WITH_CONCERNS.

@@ -1,4 +1,4 @@
-# 13 — Cross-Episode Learnings
+# 13: Cross-Episode Learnings
 
 > Patterns observed across episodes. `/retro-episode` appends here. `/plan-episode`, `/process-transcript`, and `/generate-titles` read from here.
 
@@ -10,10 +10,11 @@ Keep entries short, evidence-backed, and actionable. Prune entries that stop bei
 
 > Patterns that have produced good outcomes across 2+ episodes.
 
-_Example entries (delete once you have your own):_
-- **Ugly-number titles outperform round-number titles ~2x on CTR.** (EP07 `$9.42M` vs EP05 `$10M`.) → Keep writing specific numbers.
-- **Hot Take shorts published first in the batch get 3x the first-day views** of the same topic published third. → Lead batches with strongest hot take.
-- **Guest photos with direct eye contact beat action shots on thumbnails.** (EP03, EP09, EP11.) → Default to direct-eye-contact.
+_No entries yet. `/retro-episode` adds them._
+
+<!-- Example entry, delete once you have your own:
+- **Ugly-number titles outperform round-number titles on CTR.** (EP07 `$9.42M` vs EP05 `$10M`.) → Keep writing specific numbers.
+-->
 
 ---
 
@@ -21,9 +22,7 @@ _Example entries (delete once you have your own):_
 
 > Patterns that have produced weak outcomes across 2+ episodes. Avoid.
 
-_Example entries:_
-- **Technical Insight shorts without a human stake underperform.** (EP04, EP06.) → Always tie the insight to a person, company, or dollar amount.
-- **Two-question titles ("Why X? And How Y?") have 40% lower CTR.** → One question per title, always.
+_No entries yet. `/retro-episode` adds them._
 
 ---
 
