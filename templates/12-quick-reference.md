@@ -1,4 +1,4 @@
-# [Your Show Name] — Quick Reference
+# [Your Show Name]: Quick Reference
 
 > Copy-paste resources. No thinking required.
 
@@ -81,7 +81,9 @@ Watch now: [LINK]
 [#] + [specific thing]
 ```
 
-**Rules:** 40-60 chars (70 max). Keyword first 3 words. Ugly numbers.
+**Title length limit:** 60 characters, where YouTube truncates titles in search. Aim for 40-60. All other files point here.
+
+**Rules:** Keyword first 3 words. Ugly numbers.
 
 ---
 
@@ -107,7 +109,7 @@ Watch now: [LINK]
 
 ### Before Publishing
 - [ ] File name has keywords
-- [ ] Title under 60 chars
+- [ ] Title within the length limit above
 - [ ] Thumbnail readable small
 - [ ] Description has keywords + links
 - [ ] Pin comment written

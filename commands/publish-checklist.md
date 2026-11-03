@@ -10,9 +10,11 @@ triggers:
   - post-publish
 ---
 
-# /publish-checklist — Launch Manager
+# /publish-checklist: Launch Manager
 
 > You are the launch manager. You ensure nothing is missed before, during, and after publishing content.
+
+The title length limit lives in `knowledge/12-quick-reference.md`. If using podcli, replace `knowledge/` with `.podcli/knowledge/`.
 
 ---
 
@@ -25,7 +27,7 @@ triggers:
 - [ ] Thumbnail files ready (correct dimensions)
 
 ### Metadata
-- [ ] **Title:** Under 60 chars, hook in first 40, keyword in first 3 words
+- [ ] **Title:** Within the length limit in `knowledge/12-quick-reference.md`, hook in first 40, keyword in first 3 words
 - [ ] **Description:** Hook first line, guest attribution, hashtags, links
 - [ ] **Keywords:** Extracted from transcript, under 500 chars
 - [ ] **Chapters:** Timestamps in description (long-form only)
@@ -83,9 +85,9 @@ triggers:
 | Signal | Action |
 |--------|--------|
 | CTR below average | A/B test title OR thumbnail (never both) |
-| High impressions, low clicks | Thumbnail problem — test thumbnail first |
-| Low impressions | SEO problem — check tags and description |
-| Good CTR, low view duration | Hook problem — check opening seconds |
+| High impressions, low clicks | Thumbnail problem: test thumbnail first |
+| Low impressions | SEO problem: check tags and description |
+| Good CTR, low view duration | Hook problem: check opening seconds |
 | Everything good | Schedule remaining shorts |
 
 ### A/B Testing Rules
@@ -113,7 +115,7 @@ triggers:
 - [x] Completed items
 - [ ] Missing items
 
-## Status: [X/Y complete — READY / NOT READY]
+## Status: [X/Y complete: READY / NOT READY]
 
 ## Next Steps:
 1. [What to do first]
@@ -124,9 +126,9 @@ triggers:
 
 ## Completion
 
-Return one of (per `CLAUDE.md` Completion Protocol):
+Return one of (per the Completion Protocol in `CLAUDE.md` or `AGENTS.md`, whichever your tool reads):
 
-- **DONE** — All pre-upload checklist items are verifiable from the package input; status READY.
-- **DONE_WITH_CONCERNS** — Most items verified but 1-2 require user confirmation (e.g., thumbnail file uploaded? pin comment drafted?).
-- **BLOCKED** — Missing content package or title — no way to even generate the checklist. Ask for the package.
-- **NEEDS_INPUT** — Need the publish destination (YouTube vs. Spotify vs. both) to tailor checklist scope.
+- **DONE**: All pre-upload checklist items are verifiable from the package input; status READY.
+- **DONE_WITH_CONCERNS**: Most items verified but 1-2 require user confirmation (e.g., thumbnail file uploaded? pin comment drafted?).
+- **BLOCKED**: Missing content package or title, so there is no way to even generate the checklist. Ask for the package.
+- **NEEDS_INPUT**: Need the publish destination (YouTube vs. Spotify vs. both) to tailor checklist scope.

@@ -1,4 +1,4 @@
-# [Your Show Name] — Internal Processing Rules
+# [Your Show Name]: Internal Processing Rules
 
 > For Claude: Execute automatically based on input type. Do not ask unnecessary questions.
 
@@ -84,7 +84,7 @@
 ## Self-Correction Rules
 
 1. If generic → add specificity from transcript
-2. If title over 60 chars → cut words, not meaning
+2. If title is over the length limit in `12-quick-reference.md` → cut words, not meaning
 3. If moment needs context → skip it
 4. If thumbnail text >6 words → cut ruthlessly
 5. If description buries hook → restructure

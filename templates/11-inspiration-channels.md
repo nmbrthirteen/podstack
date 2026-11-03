@@ -1,4 +1,4 @@
-# [Your Show Name] — Inspiration Channels
+# [Your Show Name]: Inspiration Channels
 
 > Reference channels and styles that inspire your show's content strategy.
 

@@ -1,9 +1,9 @@
-# [Your Show Name] — Description Templates
+# [Your Show Name]: Description Templates
 
 ## Shorts Description Template
 
 ```
-[One-line hook that expands on the title — under 100 chars]
+[One-line hook that expands on the title, under 100 chars]
 
 [Guest Name] from [Company] shares [key insight].
 
@@ -13,7 +13,7 @@
 ```
 
 **Rules:**
-- Total under 150 chars for full visibility
+- First line under 150 chars so it shows in full. The limit applies to the first line only
 - First line = hook (visible in preview)
 - Always attribute guest and company
 - 3-5 hashtags, show hashtag first
@@ -25,7 +25,7 @@
 ```
 [2-3 sentence summary of what viewers will learn]
 
-In this episode, [Host] sits down with [Guest], [Title] at [Company], to explore [topic].
+[Guest], [Title] at [Company], [states their central claim in one sentence]. [Host] and [Guest] get into [topic].
 
 📍 Timestamps:
 00:00 - Introduction
@@ -85,7 +85,7 @@ Twitter/X: [URL]
 Set in YouTube Studio → Settings → Upload Defaults → Description:
 
 ```
-—
+---
 
 🎙️ [Your Show Name]
 [Your show tagline]
@@ -96,5 +96,5 @@ Twitter/X: [URL]
 
 📧 Newsletter: [URL]
 
-—
+---
 ```

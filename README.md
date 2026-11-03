@@ -1,8 +1,8 @@
 # PodStack
 
-> One repo, one install, entire podcast content workflow — works with Claude Code, OpenAI Codex, Cursor, opencode, or any AI tool that reads markdown.
+> One repo, one install, entire podcast content workflow. It works with Claude Code, OpenAI Codex, Cursor, opencode, or any AI tool that reads markdown.
 
-PodStack turns your AI coding tool into a full podcast content team using structured skill files. It gives you an Episode Architect, Content Analyst, Title Writer, Copywriter, Art Director, Brand Guardian, Producer, Launch Manager, and Performance Analyst — all driven from your terminal or editor.
+PodStack turns your AI coding tool into a full podcast content team using structured skill files. It gives you an Episode Architect, Content Analyst, Title Writer, Copywriter, Art Director, Brand Guardian, Producer, Launch Manager, and Performance Analyst, all driven from your terminal or editor.
 
 Built for podcasters who use [podcli](https://github.com/nmbrthirteen/podcli) but works standalone with any project.
 
@@ -44,28 +44,20 @@ PodStack ships one source-of-truth in `commands/` and installs to the right loca
 
 ## Install
 
-### Option 1: With podcli (recommended for podcasters)
+### Quick install (auto-detects your tool)
 
-If you already use [podcli](https://github.com/nmbrthirteen/podcli):
-
-```bash
-# From your podcli project directory
-npx podstack init
-```
-
-This detects your AI tool and installs commands + knowledge base templates in `.podcli/knowledge/`.
-
-### Option 2: Standalone — auto-detect host
+Clone PodStack into your project as `.podstack`, then run its installer from the project root:
 
 ```bash
-# Clone into your project
 git clone https://github.com/nmbrthirteen/podstack.git .podstack
-
-# Auto-detect Claude Code / Codex / Cursor / opencode
 .podstack/setup.sh
 ```
 
-### Option 3: Standalone — explicit host
+The installer picks the host from existing `.claude/`, `.codex/`, `.cursor/`, or `.opencode/` folders and defaults to Claude Code. In a [podcli](https://github.com/nmbrthirteen/podcli) project (a `.podcli/` folder exists) it puts the knowledge base in `.podcli/knowledge/`.
+
+Running `setup.sh` from inside a clone named `.podstack` installs into the parent folder. Any other clone location needs the project path: `setup.sh <project-dir>`.
+
+### Explicit host
 
 ```bash
 # For Claude Code
@@ -84,14 +76,23 @@ git clone https://github.com/nmbrthirteen/podstack.git .podstack
 .podstack/setup.sh --host generic
 ```
 
-### Option 4: Global install
+### Update
 
 ```bash
-# Install globally so it's available in any project
-git clone https://github.com/nmbrthirteen/podstack.git ~/.podstack
+git -C .podstack pull
+.podstack/setup.sh --update
 ```
 
-Then from any project: `~/.podstack/setup.sh`
+`--update` overwrites the commands PodStack installed. It records them in a `.podstack-manifest` file in the commands folder. If you edited an installed command, `--update` saves your version as `<file>.bak` first. Without `--update`, existing files are skipped.
+
+### Shared clone for several projects
+
+```bash
+git clone https://github.com/nmbrthirteen/podstack.git ~/.podstack
+cd ~/my-podcast && ~/.podstack/setup.sh
+```
+
+Each project gets its own copy of the commands. Run `setup.sh` once per project.
 
 ---
 
@@ -206,7 +207,7 @@ Plan → Process → Write → Review → Publish → Retro
 
 Or run everything at once: **`/produce-shorts`**
 
-After publishing: **`/retro-episode`** — also appends cross-episode learnings so future runs get smarter.
+After publishing: **`/retro-episode`** also appends cross-episode learnings so future runs get smarter.
 
 ---
 
@@ -214,18 +215,18 @@ After publishing: **`/retro-episode`** — also appends cross-episode learnings 
 
 PodStack skills are plain markdown files with YAML frontmatter. Each one shifts your AI into a specialized role. Every skill includes:
 
-- **Frontmatter** — `description`, `allowed-tools`, `argument-hint`, `triggers` (natural language phrases that auto-route to the skill)
-- **A clear role** — what the agent is acting as (analyst, writer, reviewer)
-- **An execution protocol** — step-by-step instructions
-- **Quality gates** — checks that must pass before output
-- **Output format** — structured, consistent deliverables
-- **Completion Protocol** — every skill returns `DONE`, `DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_INPUT` with evidence
-- **Three-Strike Rule** — orchestrators abort after 3 consecutive phase failures instead of looping
-- **Reference file pointers** — links to your knowledge base for detailed specs
+- **Frontmatter**: `description`, `allowed-tools`, `argument-hint`, `triggers`. Claude Code reads `description`, so put trigger phrases there. `triggers` is guidance for people and for tools that read it; Claude Code ignores that key
+- **A clear role**: what the agent is acting as (analyst, writer, reviewer)
+- **An execution protocol**: step-by-step instructions
+- **Quality gates**: checks that must pass before output
+- **Output format**: structured, consistent deliverables
+- **Completion Protocol**: every skill returns `DONE`, `DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_INPUT` with evidence
+- **Three-Strike Rule**: orchestrators abort after 3 consecutive phase failures instead of looping
+- **Reference file pointers**: links to your knowledge base for detailed specs
 
-The knowledge base files are your show's "brand brain" — they contain your voice, style, title formulas, banned words, and everything needed to produce content that sounds like *you*, not generic AI.
+The knowledge base files are your show's "brand brain". They contain your voice, style, title formulas, banned words, and everything needed to produce content that sounds like *you*, not generic AI.
 
-`/review-content` also uses **Fix-First** with parallel specialist dispatch — it auto-applies mechanical fixes (banned words, hashtag dedup, casing) and batches human-decision items into one question.
+`/review-content` also uses **Fix-First** with parallel specialist dispatch. It auto-applies mechanical fixes (banned words, hashtag dedup, casing) and batches human-decision items into one question.
 
 ---
 
@@ -237,7 +238,7 @@ Create any `.md` file in `commands/` (or your host's command folder) with the fr
 
 ```markdown
 ---
-description: What the skill does
+description: What the skill does. Use when the user says phrase 1 or phrase 2.
 allowed-tools: Read, Write
 argument-hint: [what the user types]
 triggers:
@@ -245,7 +246,7 @@ triggers:
   - natural language phrase 2
 ---
 
-# /my-custom-skill — My Role
+# /my-custom-skill: My Role
 
 > Instructions for the agent...
 
@@ -256,7 +257,7 @@ triggers:
 Return DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_INPUT per CLAUDE.md or AGENTS.md.
 ```
 
-Re-run `./setup.sh` to install it for your host.
+If you add the file to the PodStack clone's `commands/`, run `.podstack/setup.sh` to install it for your host. A file placed directly in your host's command folder works as is. `--update` never touches files PodStack did not install.
 
 ### Modify existing skills
 
@@ -270,13 +271,13 @@ All skills are plain markdown. Edit them to match your workflow. Common customiz
 
 ### podcli integration
 
-When installed with podcli, skills automatically have access to:
+When the podcli MCP server is connected, `/process-transcript` and `/produce-shorts` use its tools. Without it they work from text files.
 
-- `transcribe_podcast` — Whisper transcription with speaker detection
-- `suggest_clips` — AI-powered moment extraction
-- `create_clip` — Render clips with captions and smart cropping
-- `knowledge_base` — Read/write your brand files
-- `clip_history` — Track what's been generated
+- `transcribe_podcast`: transcribes an audio or video file when you have no transcript
+- `suggest_clips`: adds AI-suggested moments to the candidate pool
+- `clip_history`: checks which clips already exist, to avoid duplicates
+- `knowledge_base`: reads your brand files when they are not on disk
+- `create_clip`: renders approved moments with captions at the end of `/produce-shorts`
 
 ---
 
@@ -291,8 +292,11 @@ podstack/
 ├── CHANGELOG.md                 ← Release history
 ├── VERSION                      ← Current version
 ├── LICENSE
-├── setup.sh                     ← Host-detecting installer (--host flag)
-├── commands/                    ← Skill files (with YAML frontmatter) — source of truth
+├── setup.sh                     ← Host-detecting installer (--host, --update)
+├── scripts/
+│   ├── sync-to-podcli.sh        ← Sync commands and templates into a podcli project
+│   └── manifest.sh              ← Shared helpers: install manifest and checksums
+├── commands/                    ← Skill files (with YAML frontmatter), source of truth
 │   ├── plan-episode.md
 │   ├── process-transcript.md
 │   ├── generate-titles.md
